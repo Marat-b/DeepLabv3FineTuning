@@ -2,8 +2,10 @@ from pathlib import Path
 
 import click
 import torch
+from PIL import Image
 from sklearn.metrics import f1_score, roc_auc_score
 from torch.utils import data
+from torchvision import transforms
 
 import datahandler
 from model import createDeepLabv3
@@ -11,22 +13,35 @@ from trainer import train_model
 
 
 @click.command()
-@click.option("--data-directory",
-              required=True,
-              help="Specify the data directory.")
-@click.option("--exp_directory",
-              required=True,
-              help="Specify the experiment directory.")
+@click.option(
+    "--data-directory",
+    required=True,
+    help="Specify the data directory."
+)
+@click.option(
+    "--exp_directory",
+    required=True,
+    help="Specify the experiment directory."
+)
 @click.option(
     "--epochs",
     default=25,
     type=int,
-    help="Specify the number of epochs you want to run the experiment for.")
-@click.option("--batch-size",
-              default=4,
-              type=int,
-              help="Specify the batch size for the dataloader.")
-def main(data_directory, exp_directory, epochs, batch_size):
+    help="Specify the number of epochs you want to run the experiment for."
+)
+@click.option(
+    "--batch-size",
+    default=4,
+    type=int,
+    help="Specify the batch size for the dataloader."
+)
+@click.option(
+    "--out_name",
+    default="weight",
+    type=str,
+    help="Name of output file"
+)
+def main(data_directory, exp_directory, epochs, batch_size, out_name):
     # Create the deeplabv3 resnet101 model which is pretrained on a subset
     # of COCO train2017, on the 20 categories that are present in the Pascal VOC dataset.
     model = createDeepLabv3()
@@ -47,17 +62,26 @@ def main(data_directory, exp_directory, epochs, batch_size):
 
     # Create the dataloader
     dataloaders = datahandler.get_dataloader_single_folder(
-        data_directory, batch_size=batch_size)
-    _ = train_model(model,
-                    criterion,
-                    dataloaders,
-                    optimizer,
-                    bpath=exp_directory,
-                    metrics=metrics,
-                    num_epochs=epochs)
+        data_directory, batch_size=batch_size
+    )
+    best_model = train_model(
+        model,
+        criterion,
+        dataloaders,
+        optimizer,
+        bpath=exp_directory,
+        metrics=metrics,
+        num_epochs=epochs
+    )
 
     # Save the trained model
-    torch.save(model, exp_directory / 'weights.pt')
+    torch.save(model, exp_directory / out_name + '.pth')
+    img = Image.open('./images/image_256.jpg')
+    image = transforms.ToTensor()(img).unsqueeze_(0)
+    torch.onnx.export(
+        model, (image,), exp_directory / out_name + '.onnx', opset_version=12,
+        do_constant_folding=True
+    )
 
 
 if __name__ == "__main__":

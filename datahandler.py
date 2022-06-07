@@ -59,8 +59,8 @@ def get_dataloader_sep_folder(data_dir: str,
 
 
 def get_dataloader_single_folder(data_dir: str,
-                                 image_folder: str = 'Images',
-                                 mask_folder: str = 'Masks',
+                                 image_folder: str = 'images',
+                                 mask_folder: str = 'masks',
                                  fraction: float = 0.2,
                                  batch_size: int = 4):
     """Create train and test dataloader from a single directory containing
