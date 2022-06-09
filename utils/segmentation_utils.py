@@ -50,7 +50,7 @@ def get_segment_labels(image, model, device):
 
 def draw_segmentation_map(outputs):
     print(f'outputs.shape={outputs.shape}')
-    print(f'outputs.squeeze={outputs.squeeze(dim=0)}')
+    # print(f'outputs.squeeze={outputs.squeeze(dim=0)}')
     labels = torch.argmax(outputs.squeeze(dim=0), dim=0).detach().cpu().numpy()
     print(f'labels.shape={labels.shape}')
     print(f'labels={labels}')
