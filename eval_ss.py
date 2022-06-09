@@ -1,5 +1,5 @@
 import argparse
-
+import numpy as np
 # from utils import segmentation_utils
 import cv2
 import torch
@@ -15,7 +15,7 @@ parser.add_argument(
     # default='../images/dog_person.jpg'
     default='./CrackForest/Images/001.jpg'
     )
-parser.add_argument('-m', '--model', dest='model_path', help='path to model', default='./weihgts/cf_20220609.pth')
+parser.add_argument('-m', '--model', dest='model_path', help='path to model', default='./weihgts/potato_20220609.pth')
 args = vars(parser.parse_args())
 
 # set computation device
@@ -23,7 +23,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # download or load the model from disk
 # model = torchvision.models.segmentation.deeplabv3_resnet50(pretrained=True)
-model = torch.load(args['model_path'])
+model = torch.load(args['model_path'], map_location=torch.device(device))
 # model to eval() model and load onto computation devicce
 model.eval().to(device)
 
@@ -35,6 +35,7 @@ outputs = segmentation_utils.get_segment_labels(image, model, device)
 # get the data from the `out` key
 outputs = outputs['out']
 print(f'outputs={outputs}')
+print(f'outputs max={np.max(outputs.detach().cpu().numpy())}')
 segmented_image = segmentation_utils.draw_segmentation_map(outputs)
 
 final_image = segmentation_utils.image_overlay(image, segmented_image)
