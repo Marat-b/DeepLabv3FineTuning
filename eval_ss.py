@@ -30,6 +30,7 @@ model.eval().to(device)
 
 # read the image
 image = Image.open(args['input'])
+# cv2_imshow(image)
 # do forward pass and get the output dictionary
 outputs = segmentation_utils.get_segment_labels(image, model, device)
 print(f'outputs={outputs}')

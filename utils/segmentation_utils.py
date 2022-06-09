@@ -44,7 +44,8 @@ def get_segment_labels(image, model, device):
     # transform the image to tensor and load into computation device
     image = transform(image).to(device)
     image = image.unsqueeze(0)  # add a batch dimension
-    outputs = model(image)
+    with torch.no_grad():
+        outputs = model(image)
     return outputs
 
 
