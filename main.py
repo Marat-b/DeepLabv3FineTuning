@@ -78,12 +78,12 @@ def main(data_directory, exp_directory, epochs, batch_size, out_name):
     to_pth = '{}.pth'.format(out_name)
     to_onnx = '{}.onnx'.format(out_name)
     torch.save(best_model, exp_directory / to_pth)
-    img = Image.open('./images/image_256.jpg')
-    image = transforms.ToTensor()(img).unsqueeze_(0)
-    torch.onnx.export(
-        best_model, (image,), exp_directory / to_onnx, opset_version=12,
-        do_constant_folding=True
-    )
+    # img = Image.open('./images/image_256.jpg')
+    # image = transforms.ToTensor()(img).unsqueeze_(0)
+    # torch.onnx.export(
+    #     best_model, (image,), exp_directory / to_onnx, opset_version=12,
+    #     do_constant_folding=True
+    # )
 
 
 if __name__ == "__main__":
