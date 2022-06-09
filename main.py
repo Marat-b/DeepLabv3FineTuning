@@ -14,7 +14,7 @@ from trainer import train_model
 
 @click.command()
 @click.option(
-    "--data-directory",
+    "--data_directory",
     required=True,
     help="Specify the data directory."
 )
@@ -75,11 +75,13 @@ def main(data_directory, exp_directory, epochs, batch_size, out_name):
     )
 
     # Save the trained model
-    torch.save(model, exp_directory / out_name + '.pth')
+    to_pth = '{}.pth'.format(out_name)
+    to_onnx = '{}.onnx'.format(out_name)
+    torch.save(best_model, exp_directory / to_pth)
     img = Image.open('./images/image_256.jpg')
     image = transforms.ToTensor()(img).unsqueeze_(0)
     torch.onnx.export(
-        model, (image,), exp_directory / out_name + '.onnx', opset_version=12,
+        best_model, (image,), exp_directory / to_onnx, opset_version=12,
         do_constant_folding=True
     )
 
