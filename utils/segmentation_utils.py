@@ -5,7 +5,7 @@ import torch
 
 # import label_color_map
 label_color_map = [
-    (0, 0, 0),  # background
+    (0, 128, 0),  # background
     (128, 0, 0),  # aeroplane
     (0, 128, 0),  # bicycle
     (128, 128, 0),  # bird
@@ -31,11 +31,11 @@ label_color_map = [
 # define the torchvision image transforms
 transform = transforms.Compose(
     [
-        transforms.ToTensor(),
-        transforms.Normalize(
-            mean=[0.485, 0.456, 0.406],
-            std=[0.229, 0.224, 0.225]
-        )
+        transforms.ToTensor()
+        # transforms.Normalize(
+        #     mean=[0.485, 0.456, 0.406],
+        #     std=[0.229, 0.224, 0.225]
+        # )
     ]
 )
 
@@ -51,8 +51,10 @@ def get_segment_labels(image, model, device):
 
 def draw_segmentation_map(outputs):
     print(f'outputs.shape={outputs.shape}')
-    # print(f'outputs.squeeze={outputs.squeeze(dim=0)}')
-    labels = torch.argmax(outputs.squeeze(dim=0), dim=0).detach().cpu().numpy()
+    print(f'outputs.squeeze={outputs.squeeze(dim=0)}')
+    print(f'-> outputs max={np.max(outputs.detach().cpu().numpy())}')
+    # labels = torch.argmax(outputs.squeeze(dim=0), dim=0).detach().cpu().numpy()
+    labels = outputs.squeeze(dim=0).detach().cpu().numpy().astype('uint8')[0]
     print(f'labels.shape={labels.shape}')
     print(f'labels={labels}')
     print(f'label max={np.max(labels)}')

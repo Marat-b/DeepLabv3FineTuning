@@ -3,6 +3,7 @@ import numpy as np
 # from utils import segmentation_utils
 import cv2
 import torch
+import torchvision
 from PIL import Image
 
 from utils import segmentation_utils

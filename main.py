@@ -44,7 +44,7 @@ from trainer import train_model
 def main(data_directory, exp_directory, epochs, batch_size, out_name):
     # Create the deeplabv3 resnet101 model which is pretrained on a subset
     # of COCO train2017, on the 20 categories that are present in the Pascal VOC dataset.
-    model = createDeepLabv3()
+    model = createDeepLabv3(outputchannels=2)
     model.train()
     data_directory = Path(data_directory)
     # Create the experiment directory if not present
@@ -64,7 +64,7 @@ def main(data_directory, exp_directory, epochs, batch_size, out_name):
     dataloaders = datahandler.get_dataloader_single_folder(
         data_directory, batch_size=batch_size
     )
-    best_model = train_model(
+    _ = train_model(
         model,
         criterion,
         dataloaders,
@@ -77,11 +77,11 @@ def main(data_directory, exp_directory, epochs, batch_size, out_name):
     # Save the trained model
     to_pth = '{}.pth'.format(out_name)
     to_onnx = '{}.onnx'.format(out_name)
-    torch.save(best_model, exp_directory / to_pth)
+    torch.save(model, exp_directory / to_pth)
     # img = Image.open('./images/image_256.jpg')
     # image = transforms.ToTensor()(img).unsqueeze_(0)
     # torch.onnx.export(
-    #     best_model, (image,), exp_directory / to_onnx, opset_version=12,
+    #     model, (image,), exp_directory / to_onnx, opset_version=12,
     #     do_constant_folding=True
     # )
 

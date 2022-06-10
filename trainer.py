@@ -53,6 +53,7 @@ def train_model(model, criterion, dataloaders, optimizer, metrics, bpath,
                     for name, metric in metrics.items():
                         if name == 'f1_score':
                             # Use a classification threshold of 0.1
+                            print(f'y_true.shape={y_true.shape}, y_pred.shape={y_pred.shape}')
                             batchsummary[f'{phase}_{name}'].append(
                                 metric(y_true > 0, y_pred > 0.1))
                         else:

@@ -42,17 +42,22 @@ def get_dataloader_sep_folder(data_dir: str,
     data_transforms = transforms.Compose([transforms.ToTensor()])
 
     image_datasets = {
-        x: SegmentationDataset(root=Path(data_dir) / x,
-                               transforms=data_transforms,
-                               image_folder=image_folder,
-                               mask_folder=mask_folder)
+        x: SegmentationDataset(
+            root=Path(data_dir) / x,
+            transforms=data_transforms,
+            image_folder=image_folder,
+            mask_folder=mask_folder
+            )
         for x in ['Train', 'Test']
     }
     dataloaders = {
-        x: DataLoader(image_datasets[x],
-                      batch_size=batch_size,
-                      shuffle=True,
-                      num_workers=8)
+        x: DataLoader(
+            image_datasets[x],
+            batch_size=batch_size,
+            shuffle=True,
+            num_workers=8,
+            drop_last=True
+            )
         for x in ['Train', 'Test']
     }
     return dataloaders
@@ -77,28 +82,35 @@ def get_dataloader_single_folder(data_dir: str,
         dataloaders: Returns dataloaders dictionary containing the
         Train and Test dataloaders.
     """
-    data_transforms = transforms.Compose([transforms.ToTensor(),
-                                          transforms.Normalize(
-                                              mean=[0.485, 0.456, 0.406],
-                                              std=[0.229, 0.224, 0.225]
-                                              )
-                                          ])
+    data_transforms = transforms.Compose(
+        [transforms.ToTensor()
+         # transforms.Normalize(
+         #     mean=[0.485, 0.456, 0.406],
+         #     std=[0.229, 0.224, 0.225]
+         # )
+         ]
+        )
 
     image_datasets = {
-        x: SegmentationDataset(data_dir,
-                               image_folder=image_folder,
-                               mask_folder=mask_folder,
-                               seed=100,
-                               fraction=fraction,
-                               subset=x,
-                               transforms=data_transforms)
+        x: SegmentationDataset(
+            data_dir,
+            image_folder=image_folder,
+            mask_folder=mask_folder,
+            seed=100,
+            fraction=fraction,
+            subset=x,
+            transforms=data_transforms
+            )
         for x in ['Train', 'Test']
     }
     dataloaders = {
-        x: DataLoader(image_datasets[x],
-                      batch_size=batch_size,
-                      shuffle=True,
-                      num_workers=2)
+        x: DataLoader(
+            image_datasets[x],
+            batch_size=batch_size,
+            shuffle=True,
+            num_workers=2,
+            drop_last=True
+            )
         for x in ['Train', 'Test']
     }
     return dataloaders

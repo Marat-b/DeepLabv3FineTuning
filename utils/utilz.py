@@ -9,8 +9,9 @@ def check_output(arr):
     output = arr.astype('uint8')
     output = output * 255
     print(f'** output={output}')
+    print(f'output max={np.max(output)}')
     c, w, h = output.shape
-    print(w)
+    print(c, w, h)
     output = np.reshape(output, (w, h, c))
 
-    cv2_imshow(output)
+    cv2_imshow(output, 'check output')
